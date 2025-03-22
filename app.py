@@ -299,7 +299,7 @@ def classify_resume(resume_text, model, model_name, loaded_models, model_info):
 
 # Main app
 def main():
-    st.title("📄 Resume Job Category Classifier")
+    st.title("💼 JOBI Match - 🎯 Smart Resume Screening & 🔍 Job Recommendation")
     st.write("Upload a resume to classify it into the most suitable job category")
     
     # Add sidebar API information
