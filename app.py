@@ -25,7 +25,7 @@ except ImportError:
 
 # Set page configuration
 st.set_page_config(
-    page_title="Resume Job Category Classifier",
+    page_title="💼 JOBI Match - 🎯 Smart Resume Screening & 🔍 Job Recommendation",
     page_icon="📄",
     layout="wide"
 )
