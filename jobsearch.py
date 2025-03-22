@@ -20,19 +20,13 @@ def get_adzuna_jobs(job_title, location="gb", limit=10):
         List of job dictionaries
     """
     try:
-        # Adzuna API credentials - NOTE: For better security, move these to Streamlit secrets
-        # instead of hardcoding them here
-        ADZUNA_APP_ID = "a0aa8b12"  # Your Adzuna App ID
-        ADZUNA_API_KEY = "29d27ecb48ba167f904cabd142397f45"  # Your Adzuna API Key
+        # Adzuna API credentials - store these securely
+        ADZUNA_APP_ID = st.secrets.get("", os.environ.get("ADZUNA_APP_ID", ""))
+        ADZUNA_API_KEY = st.secrets.get("ADZUNA_API_KEY", os.environ.get("ADZUNA_API_KEY", ""))
         
-        # Fallback to environment variables or secrets if needed
         if not ADZUNA_APP_ID or not ADZUNA_API_KEY:
-            ADZUNA_APP_ID = st.secrets.get("ADZUNA_APP_ID", os.environ.get("ADZUNA_APP_ID", ""))
-            ADZUNA_API_KEY = st.secrets.get("ADZUNA_API_KEY", os.environ.get("ADZUNA_API_KEY", ""))
-            
-            if not ADZUNA_APP_ID or not ADZUNA_API_KEY:
-                st.sidebar.warning("Adzuna API keys not configured. Using sample data.")
-                return get_dummy_jobs(job_title, limit)
+            st.sidebar.warning("Adzuna API keys not configured. Using sample data.")
+            return get_dummy_jobs(job_title, limit)
             
         # Convert common location names to country codes
         location_map = {

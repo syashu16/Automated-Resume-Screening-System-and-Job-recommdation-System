@@ -204,21 +204,6 @@ def classify_resume(resume_text, model, model_name, loaded_models, model_info):
         # Log for debugging
         st.sidebar.write(f"Model: {model_name}")
         st.sidebar.write(f"Is pipeline: {is_pipeline}")
-        # After your existing sidebar code
-        with st.sidebar.expander("Job API Settings"):
-         st.write("""
-    ### Adzuna API Setup
-    
-    To enable real job listings:
-    
-    1. Register at [Adzuna API](https://developer.adzuna.com/)
-    2. Get your App ID and Key (free tier: 100 calls/day)
-    3. Add them to your Streamlit secrets
-    """)
-    
-    # Show API status
-        adzuna_configured = bool(st.secrets.get("ADZUNA_APP_ID", os.environ.get("ADZUNA_APP_ID", "")))
-        st.write(f"- Adzuna API: {'✅ Configured' if adzuna_configured else '❌ Not configured'}")
         
         if is_pipeline:
             # PIPELINE MODE: Pass raw text directly to the model
@@ -316,6 +301,22 @@ def classify_resume(resume_text, model, model_name, loaded_models, model_info):
 def main():
     st.title("📄 Resume Job Category Classifier")
     st.write("Upload a resume to classify it into the most suitable job category")
+    
+    # Add sidebar API information
+    with st.sidebar.expander("Job API Settings"):
+        st.write("""
+        ### Adzuna API Setup
+        
+        To enable real job listings:
+        
+        1. Register at [Adzuna API](https://developer.adzuna.com/)
+        2. Get your App ID and Key (free tier: 100 calls/day)
+        3. Add them to your Streamlit secrets
+        """)
+        
+        # Show API status
+        adzuna_configured = bool(st.secrets.get("ADZUNA_APP_ID", os.environ.get("ADZUNA_APP_ID", "")))
+        st.write(f"- Adzuna API: {'✅ Configured' if adzuna_configured else '❌ Not configured'}")
     
     # Path to models (change this to your models folder path)
     models_dir = './models'  # IMPORTANT: Update this path to where your models are stored
@@ -423,61 +424,61 @@ def main():
                 st.info("Emphasize your experience with cloud platforms, containerization, and automation tools.")
             else:
                 st.info("Ensure your resume highlights relevant technical skills and experience for this role.")
-            # Add this right after displaying classification results
-
-if predicted_category != "Classification Error":
-    # Job Recommendations Section
-    st.subheader("🔍 Recommended Jobs Based on Your Resume")
-    
-    # Let user select location
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        location_options = ["Remote", "United States", "India", "United Kingdom", "Canada", "Australia", "Germany"]
-        selected_location = st.selectbox("Select location for jobs:", location_options)
-    
-    with col2:
-        num_jobs = st.selectbox("Number of jobs:", [5, 10, 15], index=0)
-    
-    # Get job recommendations
-    with st.spinner("Finding relevant jobs..."):
-        job_listings = get_job_recommendations(predicted_category, selected_location, num_jobs)
-    
-    # Calculate relevance scores
-    if resume_text and job_listings:
-        scored_jobs = []
-        for job in job_listings:
-            relevance = score_job_relevance(resume_text, job)
-            scored_jobs.append((job, relevance))
-        
-        # Sort by relevance
-        scored_jobs.sort(key=lambda x: x[1], reverse=True)
-        
-        # Display jobs with relevance bars
-        if scored_jobs:
-            st.write(f"Found {len(scored_jobs)} job opportunities matching your profile:")
-            for i, (job, relevance) in enumerate(scored_jobs):
-                with st.expander(f"{i+1}. {job['title']} at {job['company']}"):
-                    col1, col2 = st.columns([3, 1])
+            
+            # Job Recommendations Section - MOVED THIS INSIDE the classification button click
+            if predicted_category != "Classification Error":
+                # Job Recommendations Section
+                st.subheader("🔍 Recommended Jobs Based on Your Resume")
+                
+                # Let user select location
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    location_options = ["Remote", "United States", "India", "United Kingdom", "Canada", "Australia", "Germany"]
+                    selected_location = st.selectbox("Select location for jobs:", location_options)
+                
+                with col2:
+                    num_jobs = st.selectbox("Number of jobs:", [5, 10, 15], index=0)
+                
+                # Get job recommendations
+                with st.spinner("Finding relevant jobs..."):
+                    job_listings = get_job_recommendations(predicted_category, selected_location, num_jobs)
+                
+                # Calculate relevance scores
+                if resume_text and job_listings:
+                    scored_jobs = []
+                    for job in job_listings:
+                        relevance = score_job_relevance(resume_text, job)
+                        scored_jobs.append((job, relevance))
                     
-                    with col1:
-                        st.write(f"**Company:** {job['company']}")
-                        st.write(f"**Location:** {job['location']}")
-                        if job['salary'] != "Not specified":
-                            st.write(f"**Salary:** {job['salary']}")
+                    # Sort by relevance
+                    scored_jobs.sort(key=lambda x: x[1], reverse=True)
                     
-                    with col2:
-                        st.write("**Match Score:**")
-                        st.progress(relevance)
-                        st.write(f"{int(relevance * 100)}% match")
-                    
-                    st.write("**Description:**")
-                    st.write(job['description'])
-                    
-                    st.markdown(f"[Apply Now]({job['link']})", unsafe_allow_html=True)
-        else:
-            st.info("No job listings found. Try changing the location or try again later.")
-    else:
-        st.info("Job recommendations will appear after processing your resume.")
+                    # Display jobs with relevance bars
+                    if scored_jobs:
+                        st.write(f"Found {len(scored_jobs)} job opportunities matching your profile:")
+                        for i, (job, relevance) in enumerate(scored_jobs):
+                            with st.expander(f"{i+1}. {job['title']} at {job['company']}"):
+                                col1, col2 = st.columns([3, 1])
+                                
+                                with col1:
+                                    st.write(f"**Company:** {job['company']}")
+                                    st.write(f"**Location:** {job['location']}")
+                                    if job['salary'] != "Not specified":
+                                        st.write(f"**Salary:** {job['salary']}")
+                                
+                                with col2:
+                                    st.write("**Match Score:**")
+                                    st.progress(relevance)
+                                    st.write(f"{int(relevance * 100)}% match")
+                                
+                                st.write("**Description:**")
+                                st.write(job['description'])
+                                
+                                st.markdown(f"[Apply Now]({job['link']})", unsafe_allow_html=True)
+                    else:
+                        st.info("No job listings found. Try changing the location or try again later.")
+                else:
+                    st.info("Job recommendations could not be retrieved. Please try again.")
 
 if __name__ == "__main__":
     main()
