@@ -26,11 +26,8 @@
 ---
 
 ## 🚀 Live Demo  
-🔗 **Try JOBI Match Now:** [JOBI Match App](#)  
+🔗 **Try JOBI Match Now:** https://automated-resume-screening-system-and-job-recommdation-system.streamlit.app/  
 
-<div align="center">
-  <img src="https://i.imgur.com/OBzX9kL.png" alt="JOBI Match Screenshot" width="80%"/>
-</div>
 
 ---
 
