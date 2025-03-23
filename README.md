@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="https://i.imgur.com/5NJrZTW.png" alt="JOBI Match Logo" width="280"/>
   <h2>JOBI Match</h2>
   <h3>Smart Resume Screening & Job Recommendation System</h3>
   <p>AI-powered resume classification & job matching powered by machine learning and the Adzuna API.</p>
