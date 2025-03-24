@@ -41,7 +41,7 @@ def get_adzuna_jobs(job_title, location="gb", limit=10):
             "remote": "gb"  # Default to GB for remote
         }
         
-        country_code = location_map.get(location.lower(), "gb")
+        country_code = location_map.get(location.lower(), "in")
         
         # API endpoint
         base_url = f"https://api.adzuna.com/v1/api/jobs/{country_code}/search/1"
